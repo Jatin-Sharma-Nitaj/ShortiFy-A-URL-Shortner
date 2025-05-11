@@ -23,27 +23,17 @@ const Shorten = () => {
             redirect: "follow"
         };
 
-        fetch("/api/generate", requestOptions)
-            .then(async (response) => {
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({
-                        message: "Something went wrong",
-                    }));
-                    throw new Error(errorData.message);
-                }
-
-                const result = await response.json();
-                seturl("");
-                setshorturl("");
-                setgenerated(`${process.env.NEXT_PUBLIC_HOST}/${shorturl}`);
-                console.log(result);
-                alert(result.message);
+      fetch("/api/generate", requestOptions)
+            .then((response) => response.json())
+            .then((result) => {
+                setgenerated(`${process.env.NEXT_PUBLIC_HOST}/${shorturl}`)
+                seturl("")   
+                setshorturl("")
+                console.log(result)
+                alert(result.message)
+            
             })
-            .catch((error) => {
-                console.error("Error generating shortlink:", error.message);
-                alert("Failed to generate the URL. " + error.message);
-            });
-
+            .catch((error) => console.error(error));
     }
 
     return (
