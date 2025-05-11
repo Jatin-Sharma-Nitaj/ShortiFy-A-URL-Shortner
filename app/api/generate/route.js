@@ -1,27 +1,47 @@
-import clientPromise from "@/app/lib/Mongodb"
+import clientPromise from "@/app/lib/Mongodb";
 
 export async function POST(request) {
+  try {
     const body = await request.json();
+
     const client = await clientPromise;
     const db = client.db("Shortify");
     const collection = db.collection("url");
 
-    // chek if short url exist
+    // Check if shorturl already exists
     const doc = await collection.findOne({ shorturl: body.shorturl });
     if (doc) {
       return Response.json({
-        success:true,
-        error:false,
-        message:"URL already exist!! Try Another one"});
-  
+        success: false,
+        error: true,
+        message: "URL already exists! Try another one.",
+      });
     }
-   const result =  await collection.insertOne({
-        url : body.url,
-        shorturl : body.shorturl,
-    })
+
+    // Insert new shorturl
+    await collection.insertOne({
+      url: body.url,
+      shorturl: body.shorturl,
+    });
+
     return Response.json({
-        success:true,
-        error:false,
-        message:"Url successfully Generated"
-    })
+      success: true,
+      error: false,
+      message: "URL successfully generated",
+    });
+  } catch (error) {
+    console.error("API /api/generate error:", error);
+
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: true,
+        message: "Internal Server Error",
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
 }
