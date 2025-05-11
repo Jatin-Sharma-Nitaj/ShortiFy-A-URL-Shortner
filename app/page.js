@@ -16,7 +16,7 @@ const ShortifyLanding = () => {
             Turn your long, messy URLs into clean, shareable links — beautifully and instantly.
           </p>
           <Link
-            href="/ShortURL"
+            href="#shorten"
             className="inline-block bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:scale-105 hover:brightness-110 px-8 py-3 rounded-full font-semibold text-white shadow-xl transition-all duration-300"
           >
             🚀 Get Started

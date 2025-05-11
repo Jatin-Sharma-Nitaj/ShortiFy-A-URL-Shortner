@@ -1,4 +1,5 @@
 "use client"
+import Link from 'next/link';
 import React, { useState } from 'react'
 
 const Shorten = () => {
@@ -23,16 +24,26 @@ const Shorten = () => {
         };
 
         fetch("/api/generate", requestOptions)
-            .then((response) => response.json())
-            .then((result) => {
+            .then(async (response) => {
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({
+                        message: "Something went wrong",
+                    }));
+                    throw new Error(errorData.message);
+                }
+
+                const result = await response.json();
                 seturl("");
                 setshorturl("");
                 setgenerated(`${process.env.NEXT_PUBLIC_HOST}/${shorturl}`);
-                console.log(result)
-                alert(result.message)
+                console.log(result);
+                alert(result.message);
             })
-            .catch((error) => console.error(error))
-        console.log(generated)
+            .catch((error) => {
+                console.error("Error generating shortlink:", error.message);
+                alert("Failed to generate the URL. " + error.message);
+            });
+
     }
 
     return (
@@ -68,7 +79,7 @@ const Shorten = () => {
 
                 {generated && (
                     <div className="mt-8 text-lg font-mono text-green-400 bg-gray-800 px-4 py-2 rounded-md break-words">
-                        Your link: <a href={generated} target="_blank" rel="noopener noreferrer" className="underline">{generated}</a>
+                        Your link: <Link href={generated} target="_blank" rel="noopener noreferrer" className="underline">{generated}</Link>
                     </div>
                 )}
             </div>
